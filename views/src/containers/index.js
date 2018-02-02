@@ -1,22 +1,55 @@
 import React from 'react'
-import TopNavigation from './topNavigation'
-import LeftNavigation from './leftNavigation'
-import Router from './router'
-class Main extends React.Component {
+import PrivateRoute from '../utils/PrivateRouter'
+import {Switch, Redirect, Route, withRouter} from 'react-router-dom'
+import {connect} from 'react-redux'
+import {bindActionCreators} from 'redux'
+import LoginForm from './login'
+import Main from './main'
+import Toast from '../utils/Toast'
+import {verifyAdmin} from '../redux/authentication/actions'
+// import {VERIFY_ADMIN_SUCCESS, VERIFY_ADMIN_FAILED} from '../redux/authentication/constants'
+class Wrapper extends React.Component {
+  handleVerifyAdminResponse ({userAuth}) {
+    if (userAuth.status !== this.props.userAuth) {
+      if (userAuth.status === 'VERIFIED') {
+        console.log('SUCCESSFULLY VERIFEIED')
+      } else if (userAuth.status === 'VERIFY_FAILED') {
+        console.log('FAILE TO VERIFY...')
+      }
+    }
+  }
+  componentDidMount () {
+    this.props.verifyAdmin()
+  }
+  componentWillReceiveProps (newProps) {
+    this.handleVerifyAdminResponse(newProps)
+  }
+  shouldComponentUpdate (newProps) {
+    return true
+  }
   render () {
     return (
       <div>
-        {/* <div className='preloader'>
-          <svg className='circular' viewBox='25 25 50 50'>
-            <circle className='path' cx='50' cy='50' r='20' fill='none' stroke-width='2' stroke-miterlimit='10' />
-          </svg>
-        </div> */}
-        <TopNavigation />
-        <LeftNavigation />
-        <Router />
+        <Switch>
+          <PrivateRoute path='/login' exact component={LoginForm} needAuthed={false} isAuthed={false} redirectTo={'/'} />
+          <PrivateRoute path='/' component={Main} needAuthed={false} isAuthed={false} redirectTo={'/login'} />
+          {/* <Route to='/' component={Main} /> */}
+          {/* <Route to='/login' component={LoginForm} /> */}
+          {/* <Redirect to='/login' /> */}
+        </Switch>
+        <Toast />
       </div>
     )
   }
 }
-
-export default Main
+const mapStateToProps = ({userAuth}) => {
+  return {
+    userAuth
+  }
+}
+const mapDispatchToProps = (dispatch) => {
+  return bindActionCreators({
+    verifyAdmin
+  }, dispatch)
+}
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(Wrapper))

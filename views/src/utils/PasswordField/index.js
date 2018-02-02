@@ -6,6 +6,7 @@ class CPasswordField extends React.Component {
     super(props)
     this.state = {
       error: '',
+      validation: (this.props.validation === undefined) ? true : this.props.validation,
       fullWidth: this.props.fullWidth || false,
       value: props.defaultValue || '',
       modelValue: this.props.modelValue || ''
@@ -59,38 +60,46 @@ class CPasswordField extends React.Component {
         let smallChar = /[a-z]{1}/g
         let number = /[0-9]{1}/g
         let special = /[^a-zA-Z0-9 ]{1}/g
-        if (!val && this.props.isRequired) {
-          this.setError(`${this.props.floatingLabel} is Required.`)
-        } else if (val.match(spaces)) {
-          this.setError(`${this.props.floatingLabel} must not contain any spaces.`)
-        } else if (!val.match(bigChar)) {
-          this.setError(`${this.props.floatingLabel} must contain at least 1 uppercase letter.`)
-        } else if (!val.match(smallChar)) {
-          this.setError(`${this.props.floatingLabel} must contain at least 1 lowercase letter.`)
-        } else if (!val.match(number)) {
-          this.setError(`${this.props.floatingLabel} must contain at least 1 numeral.`)
-        } else if (!val.match(special)) {
-          this.setError(`${this.props.floatingLabel} must contain at least 1 special character(Space excluded).`)
-        } else if (this.state.min && (val.length < this.state.min)) {
-          this.setError(`${this.props.floatingLabel} must be mininum length of ${this.state.min}.`)
-        } else if (this.state.max && (val.length > this.state.max)) {
-          this.setError(`${this.props.floatingLabel} must be maxinum length of ${this.state.max}.`)
-        } else {
-          this.setState({
-            error: ''
+        if (this.state.validation) {
+          if (!val && this.props.isRequired) {
+            this.setError(`${this.props.floatingLabel} is Required.`)
+          } else if (val.match(spaces)) {
+            this.setError(`${this.props.floatingLabel} must not contain any spaces.`)
+          } else if (!val.match(bigChar)) {
+            this.setError(`${this.props.floatingLabel} must contain at least 1 uppercase letter.`)
+          } else if (!val.match(smallChar)) {
+            this.setError(`${this.props.floatingLabel} must contain at least 1 lowercase letter.`)
+          } else if (!val.match(number)) {
+            this.setError(`${this.props.floatingLabel} must contain at least 1 numeral.`)
+          } else if (!val.match(special)) {
+            this.setError(`${this.props.floatingLabel} must contain at least 1 special character(Space excluded).`)
+          } else if (this.state.min && (val.length < this.state.min)) {
+            this.setError(`${this.props.floatingLabel} must be mininum length of ${this.state.min}.`)
+          } else if (this.state.max && (val.length > this.state.max)) {
+            this.setError(`${this.props.floatingLabel} must be maxinum length of ${this.state.max}.`)
+          } else {
+            this.setState({
+              error: ''
+            })
+            this.callback({
+              valid: true,
+              value: val,
+              name: ev.target.name
+            })
+            return true
+          }
+          this.callback({
+            valid: false,
+            value: '',
+            name: ev.target.name
           })
+        } else {
           this.callback({
             valid: true,
             value: val,
             name: ev.target.name
           })
-          return true
         }
-        this.callback({
-          valid: false,
-          value: '',
-          name: ev.target.name
-        })
         return false
       },
       keyup: (ev, e) => {
@@ -126,6 +135,7 @@ CPasswordField.propTypes = {
   floatingLabel: PropTypes.string,
   value: PropTypes.string,
   fullWidth: PropTypes.bool,
+  validation: PropTypes.bool,
   min: PropTypes.number,
   max: PropTypes.number,
   isRequired: PropTypes.bool,

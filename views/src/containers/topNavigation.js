@@ -1,34 +1,36 @@
 import React from 'react'
-import adminLogo from '../images/admin-logo.png'
-import adminLogoDark from '../images/admin-logo-dark.png'
-import adminText from '../images/admin-text.png'
-import adminTextDark from '../images/admin-text-dark.png'
-import UserImage from '../images/users/varun.jpg'
+import {Link} from 'react-router-dom'
+// import adminLogo from '../images/admin-logo.png'
+// import adminLogoDark from '../images/admin-logo-dark.png'
+// import adminText from '../images/admin-text.png'
+// import adminTextDark from '../images/admin-text-dark.png'
+// import UserImage from '../images/users/varun.jpg'
 export default () => {
   return (
-    <nav className='navbar navbar-default navbar-static-top m-b-0'>
-      <div className='navbar-header'>
-        <div className='top-left-part'>
-          <a className='logo' href='index.html'>
-            <b>
-              <img src={adminLogo} alt='home' className='dark-logo' />
-              <img src={adminLogoDark} alt='home' className='light-logo' />
-            </b>
-            <span className='hidden-xs'>
-              <img src={adminText} alt='home' className='dark-logo' />
-              <img src={adminTextDark} alt='home' className='light-logo' />
-            </span>
-          </a>
+    <nav className='navbar navbar-expand-lg navbar-light bg-light'>
+      <div className='container'>
+        <Link to='/' className='navbar-brand'>Dashboard</Link>
+        <button className='navbar-toggler' type='button' data-toggle='collapse' data-target='#navbarSupportedContent' aria-controls='navbarSupportedContent' aria-expanded='false' aria-label='Toggle navigation'>
+          <span className='navbar-toggler-icon' />
+        </button>
+
+        <div className='collapse navbar-collapse' id='navbarSupportedContent'>
+          <ul className='navbar-nav mr-auto'>
+            <li className='nav-item active'>
+              <Link to='/users' className='nav-link'> <span className='sr-only'>(current)</span> Users</Link>
+            </li>
+            <li className='nav-item'>
+              <Link to='/company' className='nav-link'>Company</Link>
+            </li>
+            <li className='nav-item'>
+              <Link to='/login' className='nav-link'>Login</Link>
+            </li>
+          </ul>
+          {/* <form className='form-inline my-2 my-lg-0'>
+            <input className='form-control mr-sm-2' type='search' placeholder='Search' aria-label='Search' />
+            <button className='btn btn-outline-success my-2 my-sm-0' type='submit'>Search</button>
+          </form> */}
         </div>
-        <ul className='nav navbar-top-links navbar-right pull-right'>
-          <li>
-            <form role='search' className='app-search hidden-sm hidden-xs m-r-10'>
-              <input type='text' placeholder='Search...' className='form-control' /> <a href=''><i className='fa fa-search' /></a> </form>
-          </li>
-          <li>
-            <a className='profile-pic' href='#'> <img src={UserImage} alt='user-img' width='36' className='img-circle' /><b className='hidden-xs'>Steave</b></a>
-          </li>
-        </ul>
       </div>
     </nav>
   )

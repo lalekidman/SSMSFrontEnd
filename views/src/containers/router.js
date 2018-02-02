@@ -1,12 +1,15 @@
 import React from 'react'
 import {BrowserRouter, Switch, Redirect, Route} from 'react-router-dom'
-import PrivateRoute from '../utils/PrivateRouter'
 import Dashboard from './dashboard'
+import Company from './company'
+import Users from './users'
 export default () => {
   return (
-    <Switch>
+    <div>
       <Route path={'/'} exact component={Dashboard} />
       <Route path={'/dashboard'} exact component={Dashboard} />
-    </Switch>
+      <Route path={'/company'} component={Company} />
+      <Route path={'/users'} component={Users} />
+    </div>
   )
 }

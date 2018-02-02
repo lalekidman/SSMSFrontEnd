@@ -1,11 +1,12 @@
 import React, {Component} from 'react'
 import PropTypes from 'prop-types'
 import TextField from '../TextField'
+import SelectField from '../SelectField'
 import UsernameField from '../UsernameField'
 import EmailField from '../EmailField'
 import PasswordField from '../PasswordField'
 import RaisedButton from 'material-ui/RaisedButton'
-const FormItems = ({type, name = '', min = 0, max = 0, fullWidth = true, isRequired = false, floatingLabel = '', handleChange, handleKeyUp, modelValue, defaultValue}) => {
+const FormItems = ({type, name = '', min = 0, max = 0, fullWidth = true, isRequired = false, validation = true, floatingLabel = '', handleChange, handleKeyUp, modelValue, defaultValue, options = []}) => {
   if (type === 'text') {
     return (
       <TextField
@@ -19,6 +20,7 @@ const FormItems = ({type, name = '', min = 0, max = 0, fullWidth = true, isRequi
         handleKeyUp={handleKeyUp}
         modelValue={modelValue}
         defaultValue={defaultValue}
+        validation={validation}
       />
     )
   } else if (type === 'username') {
@@ -34,6 +36,7 @@ const FormItems = ({type, name = '', min = 0, max = 0, fullWidth = true, isRequi
         handleKeyUp={handleKeyUp}
         modelValue={modelValue}
         defaultValue={defaultValue}
+        validation={validation}
       />
     )
   } else if (type === 'email') {
@@ -49,6 +52,7 @@ const FormItems = ({type, name = '', min = 0, max = 0, fullWidth = true, isRequi
         handleKeyUp={handleKeyUp}
         modelValue={modelValue}
         defaultValue={defaultValue}
+        validation={validation}
       />
     )
   } else if (type === 'password') {
@@ -62,9 +66,25 @@ const FormItems = ({type, name = '', min = 0, max = 0, fullWidth = true, isRequi
         handleKeyUp={handleKeyUp}
         modelValue={modelValue}
         defaultValue={defaultValue}
+        validation={validation}
+      />
+    )
+  } else if (type === 'select') {
+    return (
+      <SelectField
+        name={name}
+        fullWidth={fullWidth}
+        isRequired={isRequired}
+        floatingLabel={floatingLabel}
+        handleChange={handleChange}
+        modelValue={modelValue}
+        defaultValue={defaultValue}
+        validation={validation}
+        options={options}
       />
     )
   }
+  return null
 }
 
 class CustomForm extends Component {
@@ -166,6 +186,8 @@ class CustomForm extends Component {
               handleChange={this.handleChange}
               handleKeyUp={this.handleKeyUp}
               modelValue={el.modelValue}
+              validation={el.validation}
+              options={el.options}
             />
           })
         }
