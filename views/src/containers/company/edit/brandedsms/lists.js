@@ -1,9 +1,9 @@
 import React from 'react'
 import {connect} from 'react-redux'
 import {bindActionCreators} from 'redux'
-import {fetchBrandedSMS, changeBrandedSMSStatus} from '../../../redux/brandedsms/actions'
-import TextDisplay from '../../../utils/TextDisplay'
-import {showToastMessage} from '../../../redux/toast/actions'
+import {fetchBrandedSMS, changeBrandedSMSStatus} from '../../../../redux/brandedsms/actions'
+import TextDisplay from '../../../../utils/TextDisplay'
+import {showToastMessage} from '../../../../redux/toast/actions'
 
 import TextField from 'material-ui/TextField'
 import RaisedButton from 'material-ui/RaisedButton'
@@ -11,7 +11,7 @@ import SelectField from 'material-ui/SelectField'
 import MenuItem from 'material-ui/MenuItem'
 import Dialog from 'material-ui/Dialog'
 
-const ItemList = ({id, name, description, apikey, credit, enabled, status, handleChangeStatus, handleDelete}) => {
+const ItemList = ({id, name, description, apikey, credit, enabled, status, handleChangeStatus, handleDelete, handleViewCredits}) => {
   return (
     <tr>
       <td><TextDisplay label={name} /></td>
@@ -26,7 +26,8 @@ const ItemList = ({id, name, description, apikey, credit, enabled, status, handl
           onClick={handleChangeStatus.bind(this, {id, status})}
         />
         <RaisedButton 
-          label='Add Credits'
+          label='View Credits'
+          onClick={handleViewCredits.bind(this, id)}
         />
       </td>
     </tr>
@@ -34,7 +35,6 @@ const ItemList = ({id, name, description, apikey, credit, enabled, status, handl
 }
 class BrandedSMS extends React.Component{
   constructor (props) {
-    console.log('HEY HEYYY')
     super (props)
     this.statuses = [
       'PENDING',
@@ -47,6 +47,7 @@ class BrandedSMS extends React.Component{
       selectedStatus: '',
       filteredList: []
     }
+    this.initialURL = props.match.url
     this.selectedId = null
     this.changeStatusActions = [
       <RaisedButton
@@ -60,7 +61,8 @@ class BrandedSMS extends React.Component{
       />,
     ]
   }
-  handleDelete = () => {
+  handleViewCredits = (id) => {
+    this.props.history.push(`${this.initialURL}/${id}/credits`)
   }
   
   handleChangeStatus = (id) => {
@@ -88,7 +90,6 @@ class BrandedSMS extends React.Component{
         })
       },
       change: (ev, ind, value) => {
-        console.log('value: value', value)
         this.setState({
           selectedStatus: value
         })
@@ -113,7 +114,7 @@ class BrandedSMS extends React.Component{
               description.toString().toLowerCase().search(text) !== -1
             )
           }).map((el, ind) => {
-            return <ItemList key={ind} {...el} handleChangeStatus={this.handleChangeStatusDialog.click} handleDelete={this.handleDelete} />
+            return <ItemList key={ind} {...el} handleChangeStatus={this.handleChangeStatusDialog.click} handleViewCredits={this.handleViewCredits} />
           })
         })
       }

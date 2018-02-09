@@ -45,6 +45,7 @@ class UserEdit extends React.Component {
           name: 'roles',
           type: 'select',
           floatingLabel: 'Roles',
+          modelValue: null,
           options: [
             {
               value: 'user',

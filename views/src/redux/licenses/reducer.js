@@ -159,3 +159,66 @@ export const licenseFetchById = (state = licenseFetchByIdInitialState, action) =
       return state
   }
 }
+let licenseMembersInitialState = {
+  status: null,
+  error: null,
+  data: [],
+  retry: 0
+}
+
+export const licenseMembers = (state = licenseMembersInitialState, action) => {
+  const {type, error, data} = action
+  switch (type) {
+    case types.LICENSE_MEMBERS_LISTS_PENDING:
+      return {
+        ...state,
+        status: 'FETCHING'
+      }
+    case types.LICENSE_MEMBERS_LISTS_SUCCESS:
+      return {
+        ...state,
+        status: 'FETCHED',
+        data
+      }
+    case types.LICENSE_MEMBERS_LISTS_FAILED:
+      return {
+        ...state,
+        status: 'FAILED',
+        error
+      }
+    default:
+      return state
+  }
+}
+
+let saveLicenseMembersInitialState = {
+  status: null,
+  error: null,
+  data: [],
+  retry: 0
+}
+
+export const licenseMembersSave = (state = saveLicenseMembersInitialState, action) => {
+  const {type, error, data} = action
+  switch (type) {
+    case types.LICENSE_MEMBERS_SAVE_PENDING:
+      return {
+        ...state,
+        status: 'FETCHING'
+      }
+    case types.LICENSE_MEMBERS_SAVE_SUCCESS:
+      return {
+        ...state,
+        status: 'FETCHED',
+        data
+      }
+    case types.LICENSE_MEMBERS_SAVE_FAILED:
+      return {
+        ...state,
+        status: 'FAILED',
+        error
+      }
+    default:
+      return state
+  }
+}

@@ -128,7 +128,7 @@ class CustomForm extends Component {
     let dataKeys = Object.keys(data)
     let dataLen = dataKeys.length
     for (let x = 0; x < dataLen; x++) {
-      if (!data[dataKeys[x]]) {
+      if (data[dataKeys[x]] === undefined || data[dataKeys[x]] === null || data[dataKeys[x]] === '') {
         return true
       }
     }

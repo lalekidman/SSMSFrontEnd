@@ -1,6 +1,6 @@
 import React from 'react'
 import PrivateRoute from '../utils/PrivateRouter'
-import {Switch, Redirect, Route, withRouter} from 'react-router-dom'
+import {Switch, withRouter} from 'react-router-dom'
 import {connect} from 'react-redux'
 import {bindActionCreators} from 'redux'
 import LoginForm from './login'

@@ -33,3 +33,17 @@ export const fetchLicenseById = (id) => {
     id
   }
 }
+
+export const fetchLicenseMembers = (id) => {
+  return {
+    type: types.LICENSE_MEMBERS_LISTS_PENDING,
+    id
+  }
+}
+
+export const saveLicenseMembers = (data) => {
+  return {
+    type: types.LICENSE_MEMBERS_SAVE_PENDING,
+    data
+  }
+}

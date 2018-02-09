@@ -26,6 +26,17 @@ export const userList = (state = userListInitialState, action) => {
         status: 'FAILED',
         error
       }
+    case types.USER_LIST_UPDATING:
+      return {
+        ...state,
+        status: 'UPDATING'
+      }
+    case types.USER_LIST_UPDATED:
+      return {
+        ...state,
+        status: 'UPDATED',
+        data
+      }
     default:
       return state
   }
@@ -173,6 +184,37 @@ export const setActiveStatus = (state = setActiveStatusInitialState, action) => 
         data
       }
     case types.SET_USER_ACTIVE_STATUS_FAILED:
+      return {
+        ...state,
+        status: 'FAILED',
+        error
+      }
+    default:
+      return state
+  }
+}
+
+const fetchUserWithoutLicenseInitialState = {
+  status: null,
+  error: null,
+  retry: null,
+  data: {}
+}
+export const userWithoutLicense = (state = fetchUserWithoutLicenseInitialState, action) => {
+  const {type, error, data} = action
+  switch (type) {
+    case types.FETCH_USER_WITHOUT_LICENSE_PENDING:
+      return {
+        ...state,
+        status: 'FETCHING'
+      }
+    case types.FETCH_USER_WITHOUT_LICENSE_SUCCESS:
+      return {
+        ...state,
+        status: 'FETCHED',
+        data
+      }
+    case types.FETCH_USER_WITHOUT_LICENSE_FAILED:
       return {
         ...state,
         status: 'FAILED',

@@ -1,6 +1,6 @@
 import React from 'react'
 import {connect} from 'react-redux'
-import {fetchUser, deleteUser, setUserActiveStatus} from '../../redux/users/actions'
+import {fetchUser, deleteUser, setUserActiveStatus, UpdatingUserList} from '../../redux/users/actions'
 import { bindActionCreators } from 'redux'
 import {showToastMessage} from '../../redux/toast/actions'
 import RaisedButton from 'material-ui/RaisedButton'
@@ -24,8 +24,8 @@ const UserList = (props) => {
       <td><TextDisplay label={props.license ? props.license.name : 'Empty'} /></td>
       <td>
         <RaisedButton label='edit' onClick={props.handleEditUser.bind(this, {userId: props.id, license: props.license})} />
-        <RaisedButton label='delete' onClick={props.handleDeleteUser.bind(this, {accountId: props.id, license: props.license})} />
         <RaisedButton label={activeButtonLabel} onClick={props.handleActiveStatus.bind(this, {accountId: props.id, active: props.status.actives, name: props.name})} />
+        <RaisedButton label='delete' onClick={props.handleDeleteUser.bind(this, {accountId: props.id, license: props.license})} />
       </td>
     </tr>
   )
@@ -39,6 +39,7 @@ class Users extends React.Component {
       selectedUser: {},
       lists: [],
       filteredList: [],
+      licenseList: [],
       searchText: '',
       searchCompany: '',
     }
@@ -72,32 +73,46 @@ class Users extends React.Component {
   moveToAdd = () => {
     this.props.history.push('/users/add')
   }
-  setLists = (props) => {
-    this.setState({
-      lists: props.userList.data,
-      filteredList: props.userList.data
-    })
+  handleLicenseFetchResponse ({licenseList}) {
+    if (licenseList.status !== this.props.licenseList.status) {
+      if (licenseList.status === 'FETCHED') {
+        this.setState({
+          licenseList: licenseList.data.map((el, ind)=>{
+            return (
+              <MenuItem key={ind} value={el.id} primaryText={el.name} />
+            )
+          })
+        })
+      }
+    }
   }
-  handleUserListResponse (props) {
+  handleUserListResponse (props, force = false) {
     const {userList} = props
-    if (this.props.userList.status !== userList.status) {
+    if (this.props.userList.status !== userList.status || force) {
       if (userList.status === 'FETCHED') {
         this.props.showToastMessage('Successfully fetch user lists.')
-        this.setLists(props)
+        this.handleSearch.display('', '', props)
       } else if (userList.status === 'FETCHING') {
         this.props.showToastMessage('Fetching User List...')
       } else if (userList.status === 'FAILED') {
         this.props.showToastMessage('Failed to fetch user list. Please refresh the page. Thank you.')
+      } else if (userList.status === 'UPDATED') {
+        const {searchText, searchCompany} = this.state
+        this.handleSearch.display(searchText, searchCompany, props)
       }
     }
   }
-  handleUserDeleteResponse ({userDelete}) {
+  handleUserDeleteResponse ({userDelete, userList}) {
     if (this.props.userDelete.status !== userDelete.status) {
       if (userDelete.status === 'FETCHED') {
         this.props.showToastMessage('Successfully delete user.')
-        this.handleDelete.status(false)
+        this.props.UpdatingUserList({
+          userId: this.deleteDialogData.accountId,
+          userList: userList.data
+        })
       } else if (userDelete.status === 'FETCHING') {
-        this.props.showToastMessage('Deleting...')
+        this.props.showToastMessage(`Deleting...`)
+        this.handleDelete.status(false)
       } else if (userDelete.status === 'FAILED') {
         this.props.showToastMessage(`Failed to delete user. Error: ${userDelete.error}`)
       }
@@ -171,7 +186,6 @@ class Users extends React.Component {
         this.setState({
           searchCompany: value
         })
-        console.log('TEst company: ', value)
         const {searchText} = self.state
         this.handleSearch.display(searchText, value)
       },
@@ -187,27 +201,28 @@ class Users extends React.Component {
           }
         }, 500)
       },
-      display: (text = '', company = '') => {
-        const {lists} = this.state
+      display: (text = '', company = '', props) => {
+        const {userList} = props || this.props 
         this.setState({
-          filteredList: lists.filter(el => {
+          filteredList: userList.data.filter(el => {
             let name = el.name || ''
             let email = el.email || ''
             let username = el.username || ''
             let roles = el.roles[0] || ''
             let companyName = el.license ? el.license.name || '' : ''
             let companyId = el.license ? el.license.id || '' : ''
-            // return this.recursiveSearch(el, value)
-            // console.log('CIMAPN: ', (companyId.toString().toLowerCase().search(company.toLowerCase()) !== -1))
-            // if (company) {
-            //   return (companyId.toString().toLowerCase().search(company.toLowerCase()) !== -1)
-            // } else {
               return (((name.toString().toLowerCase().search(text.toLowerCase()) !== -1) ||
                 (email.toString().toLowerCase().search(text.toLowerCase()) !== -1) ||
                 (username.toString().toLowerCase().search(text.toLowerCase()) !== -1) ||
                 (roles.toString().toLowerCase().search(text.toLowerCase()) !== -1) ||
-                (companyName.toString().toLowerCase().search(text.toLowerCase()) !== -1)) && (companyId.toString().toLowerCase().search(company.toLowerCase()) !== -1)) 
-            // }
+                (companyName.toString().toLowerCase().search(text.toLowerCase()) !== -1)) && (companyId.toString().toLowerCase().search(company.toLowerCase()) !== -1))
+          }).map((el, ind) => {
+            return <UserList
+              key={ind} {...el}
+              handleDeleteUser={this.handleDelete.click}
+              handleEditUser={this.handleEditUser}
+              handleActiveStatus={this.handleActive.click}
+              checkActiveStatus={this.checkActiveStatus} />
           })
         })
       },
@@ -218,7 +233,7 @@ class Users extends React.Component {
           let txt = el[keys[x]]
           if (txt) {
             if (txt instanceof Object) {
-              return this.recursiveSearch(txt, value)
+              return this.handleSearch.recursive(txt, value)
             } else if (txt.toString().toLowerCase().search(value.toLowerCase()) !== -1) {
               console.log('field: ', keys[x])
               console.log('FUCKTEXT: ', txt)
@@ -233,25 +248,23 @@ class Users extends React.Component {
   componentWillUnmount () {
     window.clearTimeout(this.Inbounce)
   }
-  componentDidUpdate () {
-    // console.log('filtered lists: ', this.state.filteredList)
-  }
   componentDidMount () {
     window.clearTimeout(this.Inbounce)
     if (this.props.userList.status !== 'FETCHED') {
       this.props.fetchUser()
     } else {
-      this.setLists(this.props)
+      this.handleUserListResponse(this.props, true)
     }
   }
   componentWillReceiveProps (newProps) {
     this.handleUserListResponse(newProps)
     this.handleUserDeleteResponse(newProps)
     this.handleSetActiveStatusResponse(newProps)
+    this.handleLicenseFetchResponse(newProps)
   }
-  shouldComponentUpdate (newProps) {
-    return (newProps.userList.status === 'FETCHED')
-  }
+  // shouldComponentUpdate (newProps) {
+  //   return (newProps.userList.status === 'FETCHED')
+  // }
   render () {
     return (
       <div>
@@ -276,11 +289,7 @@ class Users extends React.Component {
               onChange={this.handleSearch.company}
             >
               {
-                this.props.licenseList.data.map((el, ind)=>{
-                  return (
-                    <MenuItem key={ind} value={el.id} primaryText={el.name} />
-                  )
-                })
+                this.state.licenseList
               }
             </SelectField>
           </div>
@@ -301,16 +310,7 @@ class Users extends React.Component {
             </tr>
           </thead>
           <tbody>
-            {
-              this.state.filteredList.map((el, ind) => {
-                return <UserList
-                  key={ind} {...el}
-                  handleDeleteUser={this.handleDelete.click}
-                  handleEditUser={this.handleEditUser}
-                  handleActiveStatus={this.handleActive.click}
-                  checkActiveStatus={this.checkActiveStatus} />
-              })
-            }
+            {this.state.filteredList}
           </tbody>
         </table>
         <Dialog
@@ -349,6 +349,7 @@ const mapDispatchToProps = (dispatch) => {
     fetchUser,
     deleteUser,
     setUserActiveStatus,
+    UpdatingUserList,
     showToastMessage
   }, dispatch)
 }

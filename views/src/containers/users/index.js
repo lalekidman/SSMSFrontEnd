@@ -10,16 +10,6 @@ class Users extends React.Component {
   componentDidMount () {
     this.props.fetchLicense()
   }
-  handleLicenseFetchResponse ({licenseList}) {
-    if (licenseList.status !== this.props.licenseList.status) {
-      if (licenseList.status === 'FETCHED') {
-        console.log('GG KANOR')
-      }
-    }
-  }
-  componentWillReceiveProps (newProps) {
-    this.handleLicenseFetchResponse(newProps)
-  }
   shouldComponentUpdate (newProps) {
     return (newProps.licenseList.status === 'FETCHED')
   }

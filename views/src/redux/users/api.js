@@ -63,3 +63,12 @@ export const fetchSingleUser = ({accountId, licenseId}) => {
     return res.data
   })
 }
+
+export const fetchUserWithoutLicense = () => {
+  return http({
+    method: 'GET',
+    url: `${DOMAIN}/api/users/without-license`
+  }).then(res => {
+    return res.data
+  })
+}

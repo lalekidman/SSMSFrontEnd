@@ -1,0 +1,18 @@
+.table-scroll {
+  overflow:auto;
+  height:600px;
+}
+.table-scroll > table {
+  width: 100%
+}
+.table-scroll > table > tbody {
+  margin-top:25px;
+  position: absolute;
+  overflow: auto;
+  height:500px;
+  width:85%
+}
+.table-scroll > table > tbody > tr > td{
+  width:100% !important;
+  /* position: absolute; */
+}

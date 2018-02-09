@@ -1,6 +1,6 @@
 import {put, all, call, takeLatest} from 'redux-saga/effects'
 import * as types from './constants'
-import {fetchUser, addUser, updateUser, deleteUser, fetchSingleUser, setUserActiveStatus} from './api'
+import {fetchUser, addUser, updateUser, deleteUser, fetchSingleUser, setUserActiveStatus, fetchUserWithoutLicense} from './api'
 function * userListWorker () {
   try {
     const res = yield call(fetchUser)
@@ -19,7 +19,22 @@ function * userListWorker () {
     })
   }
 }
-
+function * userListUpdatingWorker ({data}) {
+  try {
+    const {userId, userList} = data
+    const ind = userList.findIndex(el => (el.id.toString() === userId))
+    userList.splice(ind, 1)
+    yield put({
+      type: types.USER_LIST_UPDATED,
+      data: userList
+    })
+  } catch (err) {
+    yield put({
+      type: types.USER_LIST_FAILED,
+      error: err.message
+    })
+  }
+}
 function * userAddWorker ({data}) {
   try {
     const res = yield call(addUser, data)
@@ -112,13 +127,34 @@ function * setActiveStatusWorker ({data}) {
   }
 }
 
+function * fetchUserWithoutLicenseWorker () {
+  try {
+    const res = yield call(fetchUserWithoutLicense)
+    if (!res.err) {
+      yield put({
+        type: types.FETCH_USER_WITHOUT_LICENSE_SUCCESS,
+        data: res.data
+      })
+    } else {
+      throw new Error(res.err)
+    }
+  } catch (err) {
+    yield put({
+      type: types.FETCH_USER_WITHOUT_LICENSE_FAILED,
+      error: err.message
+    })
+  }
+}
+
 export default function * () {
   yield all([
     takeLatest(types.USER_LIST_PENDING, userListWorker),
     takeLatest(types.USER_ADD_PENDING, userAddWorker),
     takeLatest(types.USER_UPDATE_PENDING, updateUserWorker),
     takeLatest(types.USER_DELETE_PENDING, deleteUserWorker),
+    takeLatest(types.USER_LIST_UPDATING, userListUpdatingWorker),
     takeLatest(types.SET_USER_ACTIVE_STATUS_PENDING, setActiveStatusWorker),
+    takeLatest(types.FETCH_USER_WITHOUT_LICENSE_PENDING, fetchUserWithoutLicenseWorker),
     takeLatest(types.FETCH_SINGLE_USER_PENDING, fetchSingleUserWorker)
   ])
 }

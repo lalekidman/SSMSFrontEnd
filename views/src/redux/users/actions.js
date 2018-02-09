@@ -4,6 +4,11 @@ export const fetchUser = () => ({
   type: types.USER_LIST_PENDING
 })
 
+export const UpdatingUserList = (data) => ({
+  type: types.USER_LIST_UPDATING,
+  data
+})
+
 export const addUser = (data) => ({
   type: types.USER_ADD_PENDING,
   data
@@ -27,4 +32,8 @@ export const setUserActiveStatus = (data) => ({
 export const fetchSingleUser = (data) => ({
   type: types.FETCH_SINGLE_USER_PENDING,
   data
+})
+
+export const fetchUserWithoutLicense = () => ({
+  type: types.FETCH_USER_WITHOUT_LICENSE_PENDING
 })

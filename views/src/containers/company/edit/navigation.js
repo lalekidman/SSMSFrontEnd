@@ -6,6 +6,7 @@ export default ({licenseId}) => {
       <ul>
         <li><Link to={`/company/edit/${licenseId}`}>General</Link></li>
         <li><Link to={`/company/edit/${licenseId}/brandedsms`}>BrandedSMS</Link></li>
+        <li><Link to={`/company/edit/${licenseId}/members`}>Members</Link></li>
       </ul>
     </div>
   )

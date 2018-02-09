@@ -1,7 +1,8 @@
 import React from 'react'
 import {Route, Switch} from 'react-router-dom'
 import General from './general'
-import BrandedSMS from './brandedsms'
+import BrandedSMS from './brandedsms/'
+import Members from './members/'
 import Navigation from './navigation'
 import {connect} from 'react-redux'
 import {bindActionCreators} from 'redux'
@@ -14,7 +15,7 @@ class EditForm extends React.Component {
 
     }
     this.licenseId = props.match.params.licenseId
-    this.initialUrl = '/company/edit/:licenseId'
+    this.initialUrl = props.match.path
   }
   handleLicenseFetchByIdResponse ({licenseFetchById}) {
     if (this.props.licenseFetchById.status !== licenseFetchById.status) {
@@ -42,7 +43,8 @@ class EditForm extends React.Component {
         <div className='col-md-10'>
           <Switch>
             <Route path={`${this.initialUrl}/`} exact component={General} />
-            <Route path={`${this.initialUrl}/brandedsms`} exact component={BrandedSMS} />
+            <Route path={`${this.initialUrl}/brandedsms`} component={BrandedSMS} />
+            <Route path={`${this.initialUrl}/members`} component={Members} />
           </Switch>
         </div>
       </div>

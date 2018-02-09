@@ -62,3 +62,30 @@ export const fetchLicenseById = (id) => {
     return res.data
   })
 }
+
+export const fetchLicenseMembersById = (id) => {
+  return http({
+    url: `${DOMAIN}/api/license/${id}/members`,
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json'
+    }
+  }).then(res => {
+    return res.data
+  })
+}
+
+export const saveLicenseMembersById = ({id, members}) => {
+  return http({
+    url: `${DOMAIN}/api/license/${id}/members`,
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    data: {
+      members
+    }
+  }).then(res => {
+    return res.data
+  })
+}

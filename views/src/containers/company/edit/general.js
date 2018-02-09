@@ -7,7 +7,6 @@ import {showToastMessage} from '../../../redux/toast/actions'
 class GeneralForm extends React.Component {
   constructor (props) {
     super(props)
-    console.log('initiate add form comapany')
     this.state = {
       formButton: {
         status: false,
@@ -29,8 +28,6 @@ class GeneralForm extends React.Component {
           floatingLabel: 'Company Email'
         },
         {
-          max: 40,
-          min: 4,
           type: 'select',
           name: 'package',
           floatingLabel: 'Package Type',
@@ -47,6 +44,38 @@ class GeneralForm extends React.Component {
             {
               value: 'C',
               label: 'C'
+            }
+          ]
+        },
+        {
+          type: 'select',
+          name: 'disconnectedStatus',
+          floatingLabel: 'Disconnect Status',
+          modelValue: '',
+          options: [
+            {
+              value: 0,
+              label: 'Not Disconnected'
+            },
+            {
+              value: 1,
+              label: 'Disconnected'
+            }
+          ]
+        },
+        {
+          type: 'select',
+          name: 'demoStatus',
+          floatingLabel: 'Subscription Status',
+          modelValue: '',
+          options: [
+            {
+              value: 0,
+              label: 'Production'
+            },
+            {
+              value: 1,
+              label: 'Demo'
             }
           ]
         }
@@ -72,14 +101,14 @@ class GeneralForm extends React.Component {
   handleEditLicenseResponse ({licenseEdit}) {
     if (this.props.licenseEdit.status !== licenseEdit.status) {
       if (licenseEdit.status === 'FETCHED') {
-        this.props.showToastMessage('Successfully edit new license!')
+        this.props.showToastMessage('Successfully update new license!')
         this.setFormButton('SUBMITED', true)
         this.handleBackButton()
       } else if (licenseEdit.status === 'FETCHING') {
-        this.props.showToastMessage('Request edit license...')
+        this.props.showToastMessage('Request update license...')
         this.setFormButton('Submitting...', true)
       } else if (licenseEdit.status === 'FAILED') {
-        this.props.showToastMessage(`Failed to edit new license. Error: ${licenseEdit.error}`)
+        this.props.showToastMessage(`Failed to update new license. Error: ${licenseEdit.error}`)
         this.setFormButton('SUBMIT', false)
       }
     }

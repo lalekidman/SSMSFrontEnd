@@ -1,25 +1,35 @@
 import React from 'react'
-import TextField from 'material-ui/TextField'
 import SelectField from 'material-ui/SelectField'
 import MenuItem from 'material-ui/MenuItem'
 import PropTypes from 'prop-types'
-class CTextField extends React.Component {
+class CSelectField extends React.Component {
   constructor (props) {
     super(props)
     this.state = {
       error: '',
-      fullWidth: this.props.fullWidth || false,
+      fullWidth: props.fullWidth || false,
       value: props.defaultValue || '',
-      modelValue: this.props.modelValue || ''
+      modelValue: this.setModelValue(props.modelValue)
+    }
+  }
+  setModelValue (modelValue) {
+    if (typeof modelValue === 'undefined') {
+      return null
+    } else if (typeof modelValue === 'number') {
+      return modelValue || 0
+    } else if (typeof modelValue === 'string') {
+      return modelValue || ''
+    } else if (typeof modelValue === 'boolean') {
+      return modelValue
     }
   }
   setChanges (props) {
     this.handle.change({
       target: {
         name: props.name,
-        value: props.modelValue || ''
+        value: props.modelValue || 0
       }
-    }, 1, props.modelValue || '')
+    }, 1, this.setModelValue(props.modelValue))
   }
   componentDidMount () {
     if (this.props.modelValue) {
@@ -61,11 +71,6 @@ class CTextField extends React.Component {
           this.setState({
             error: ''
           })
-          console.log({
-            valid: true,
-            value: val,
-            name: this.props.name
-          })
           this.callback({
             valid: true,
             value: val,
@@ -104,14 +109,17 @@ class CTextField extends React.Component {
     )
   }
 }
-CTextField.propTypes = {
+CSelectField.propTypes = {
   handleChange: PropTypes.func.isRequired,
   placeholder: PropTypes.string,
   floatingLabel: PropTypes.string,
   fullWidth: PropTypes.bool,
   isRequired: PropTypes.bool,
   name: PropTypes.string.isRequired,
-  modelValue: PropTypes.string,
+  modelValue: PropTypes.oneOfType([
+    PropTypes.string,
+    PropTypes.number
+  ]),
   options: PropTypes.array
 }
-export default CTextField
+export default CSelectField
